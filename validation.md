@@ -1705,6 +1705,18 @@ The first argument passed to the `sometimes` method is the name of the field we 
 > **Note**  
 > The `$input` parameter passed to your closure will be an instance of `Illuminate\Support\Fluent` and may be used to access your input and files under validation.
 
+You might also need to add validation rules based on values not contained in the request's input. You can utilize the `Rule::when` method. 
+
+    use Illuminate\Support\Facades\Validator;
+    use Illuminate\Validation\Rule;
+
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'permissions' => [Rule::when(auth()->user()->isAdministrator(), ['required', 'array'], ['prohibited']],
+    ]);
+    
+The example above requires the permissions input to be required and an array if the user submitting the request is an administrator, but if not, then the `permissions` input item should be prohibited.
+
 <a name="complex-conditional-array-validation"></a>
 #### Complex Conditional Array Validation
 
